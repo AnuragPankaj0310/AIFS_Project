@@ -1,0 +1,5 @@
+Metric,Unit,Baseline,Optimized,Saving,Saving_%
+Electricity Cost,EUR,92.886,165.3,-72.414,-78.0
+Carbon Emissions,kg CO₂,114.957,168.0,-53.043,-46.1
+Peak Grid Demand,kW,30.0,40.0,-10.0,-33.3
+Solar Self-Consumption,kWh,309.44,0.0,309.44,100.0

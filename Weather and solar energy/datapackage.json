@@ -1,0 +1,937 @@
+{
+    "profile": "tabular-data-package",
+    "name": "opsd_weather_data",
+    "title": "Weather Data",
+    "id": "https://doi.org/10.25832/weather_data/2020-09-16",
+    "description": "Hourly geographically aggregated weather data for Europe",
+    "longDescription": "This data package contains radiation and temperature data, at hourly resolution, for Europe, aggregated by Renewables.ninja from the NASA MERRA-2 reanalysis. It covers the European countries using a population-weighted mean across all MERRA-2 grid cells within the given country.",
+    "homepage": "https://data.open-power-system-data.org/weather_data/2020-09-16",
+    "documentation": "https://github.com/Open-Power-System-Data/weather_data/blob/master/main.ipynb",
+    "version": "2020-09-16",
+    "created": "2020-09-16",
+    "lastChanges": "Include radiation and temperature data up to 2019",
+    "keywords": [
+        "Open Power System Data",
+        "time series",
+        "power systems",
+        "weather",
+        "MERRA-2",
+        "Renewables.ninja"
+    ],
+    "geographicalScope": "Europe",
+    "temporalScope": {
+        "start": "1980-01-01",
+        "end": "2019-12-31"
+    },
+    "contributors": [
+        {
+            "web": "https://www.pfenninger.org/",
+            "name": "Stefan Pfenninger",
+            "email": "stefan.pfenninger@usys.ethz.ch",
+            "organization": "ETH Z\u00fcrich",
+            "role": "author"
+        },
+        {
+            "web": "https://www.imperial.ac.uk/people/i.staffell",
+            "name": "Iain Staffell",
+            "email": "i.staffell@imperial.ac.uk",
+            "organization": "Imperial College London",
+            "role": "author"
+        }
+    ],
+    "sources": [
+        {
+            "name": "NASA",
+            "web": "https://gmao.gsfc.nasa.gov/reanalysis/MERRA-2/"
+        },
+        {
+            "name": "Renewables.ninja",
+            "web": "https://www.renewables.ninja/#/country"
+        }
+    ],
+    "resources": [
+        {
+            "profile": "tabular-data-resource",
+            "name": "opsd_weather_data",
+            "title": "Weather Data",
+            "description": "Geographically aggregated weather data",
+            "path": "weather_data.csv",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "UTF8",
+            "bytes": 233540027,
+            "hash": "dea87ece8eded83802c8e6c740ba2e53",
+            "dialect": {
+                "csvddfVersion": 1.0,
+                "delimiter": ",",
+                "lineTerminator": "\n",
+                "header": true
+            },
+            "_alternativeFormats": [
+                {
+                    "path": "weather_data.csv",
+                    "stacking": "Singleindex",
+                    "format": "csv"
+                },
+                {
+                    "path": "weather_data_multiindex.csv",
+                    "stacking": "Multiindex",
+                    "format": "csv"
+                }
+            ],
+            "schema": {
+                "primaryKey": "utc_timestamp",
+                "missingValues": "",
+                "fields": [
+                    {
+                        "name": "utc_timestamp",
+                        "description": "Start of time period in Coordinated Universal Time",
+                        "type": "datetime",
+                        "format": "fmt:%Y-%m-%dT%H%M%SZ",
+                        "opsdContentfilter": true
+                    },
+                    {
+                        "name": "AT_temperature",
+                        "description": "temperature weather variable for AT in degrees C",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "temperature",
+                            "Country": "AT",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "AT_radiation_direct_horizontal",
+                        "description": "radiation_direct_horizontal weather variable for AT in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_direct_horizontal",
+                            "Country": "AT",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "AT_radiation_diffuse_horizontal",
+                        "description": "radiation_diffuse_horizontal weather variable for AT in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_diffuse_horizontal",
+                            "Country": "AT",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "BE_temperature",
+                        "description": "temperature weather variable for BE in degrees C",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "temperature",
+                            "Country": "BE",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "BE_radiation_direct_horizontal",
+                        "description": "radiation_direct_horizontal weather variable for BE in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_direct_horizontal",
+                            "Country": "BE",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "BE_radiation_diffuse_horizontal",
+                        "description": "radiation_diffuse_horizontal weather variable for BE in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_diffuse_horizontal",
+                            "Country": "BE",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "BG_temperature",
+                        "description": "temperature weather variable for BG in degrees C",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "temperature",
+                            "Country": "BG",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "BG_radiation_direct_horizontal",
+                        "description": "radiation_direct_horizontal weather variable for BG in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_direct_horizontal",
+                            "Country": "BG",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "BG_radiation_diffuse_horizontal",
+                        "description": "radiation_diffuse_horizontal weather variable for BG in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_diffuse_horizontal",
+                            "Country": "BG",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "CH_temperature",
+                        "description": "temperature weather variable for CH in degrees C",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "temperature",
+                            "Country": "CH",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "CH_radiation_direct_horizontal",
+                        "description": "radiation_direct_horizontal weather variable for CH in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_direct_horizontal",
+                            "Country": "CH",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "CH_radiation_diffuse_horizontal",
+                        "description": "radiation_diffuse_horizontal weather variable for CH in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_diffuse_horizontal",
+                            "Country": "CH",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "CZ_temperature",
+                        "description": "temperature weather variable for CZ in degrees C",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "temperature",
+                            "Country": "CZ",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "CZ_radiation_direct_horizontal",
+                        "description": "radiation_direct_horizontal weather variable for CZ in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_direct_horizontal",
+                            "Country": "CZ",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "CZ_radiation_diffuse_horizontal",
+                        "description": "radiation_diffuse_horizontal weather variable for CZ in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_diffuse_horizontal",
+                            "Country": "CZ",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "DE_temperature",
+                        "description": "temperature weather variable for DE in degrees C",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "temperature",
+                            "Country": "DE",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "DE_radiation_direct_horizontal",
+                        "description": "radiation_direct_horizontal weather variable for DE in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_direct_horizontal",
+                            "Country": "DE",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "DE_radiation_diffuse_horizontal",
+                        "description": "radiation_diffuse_horizontal weather variable for DE in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_diffuse_horizontal",
+                            "Country": "DE",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "DK_temperature",
+                        "description": "temperature weather variable for DK in degrees C",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "temperature",
+                            "Country": "DK",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "DK_radiation_direct_horizontal",
+                        "description": "radiation_direct_horizontal weather variable for DK in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_direct_horizontal",
+                            "Country": "DK",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "DK_radiation_diffuse_horizontal",
+                        "description": "radiation_diffuse_horizontal weather variable for DK in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_diffuse_horizontal",
+                            "Country": "DK",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "EE_temperature",
+                        "description": "temperature weather variable for EE in degrees C",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "temperature",
+                            "Country": "EE",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "EE_radiation_direct_horizontal",
+                        "description": "radiation_direct_horizontal weather variable for EE in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_direct_horizontal",
+                            "Country": "EE",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "EE_radiation_diffuse_horizontal",
+                        "description": "radiation_diffuse_horizontal weather variable for EE in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_diffuse_horizontal",
+                            "Country": "EE",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "ES_temperature",
+                        "description": "temperature weather variable for ES in degrees C",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "temperature",
+                            "Country": "ES",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "ES_radiation_direct_horizontal",
+                        "description": "radiation_direct_horizontal weather variable for ES in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_direct_horizontal",
+                            "Country": "ES",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "ES_radiation_diffuse_horizontal",
+                        "description": "radiation_diffuse_horizontal weather variable for ES in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_diffuse_horizontal",
+                            "Country": "ES",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "FI_temperature",
+                        "description": "temperature weather variable for FI in degrees C",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "temperature",
+                            "Country": "FI",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "FI_radiation_direct_horizontal",
+                        "description": "radiation_direct_horizontal weather variable for FI in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_direct_horizontal",
+                            "Country": "FI",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "FI_radiation_diffuse_horizontal",
+                        "description": "radiation_diffuse_horizontal weather variable for FI in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_diffuse_horizontal",
+                            "Country": "FI",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "FR_temperature",
+                        "description": "temperature weather variable for FR in degrees C",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "temperature",
+                            "Country": "FR",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "FR_radiation_direct_horizontal",
+                        "description": "radiation_direct_horizontal weather variable for FR in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_direct_horizontal",
+                            "Country": "FR",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "FR_radiation_diffuse_horizontal",
+                        "description": "radiation_diffuse_horizontal weather variable for FR in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_diffuse_horizontal",
+                            "Country": "FR",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "GB_temperature",
+                        "description": "temperature weather variable for GB in degrees C",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "temperature",
+                            "Country": "GB",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "GB_radiation_direct_horizontal",
+                        "description": "radiation_direct_horizontal weather variable for GB in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_direct_horizontal",
+                            "Country": "GB",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "GB_radiation_diffuse_horizontal",
+                        "description": "radiation_diffuse_horizontal weather variable for GB in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_diffuse_horizontal",
+                            "Country": "GB",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "GR_temperature",
+                        "description": "temperature weather variable for GR in degrees C",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "temperature",
+                            "Country": "GR",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "GR_radiation_direct_horizontal",
+                        "description": "radiation_direct_horizontal weather variable for GR in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_direct_horizontal",
+                            "Country": "GR",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "GR_radiation_diffuse_horizontal",
+                        "description": "radiation_diffuse_horizontal weather variable for GR in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_diffuse_horizontal",
+                            "Country": "GR",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "HR_temperature",
+                        "description": "temperature weather variable for HR in degrees C",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "temperature",
+                            "Country": "HR",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "HR_radiation_direct_horizontal",
+                        "description": "radiation_direct_horizontal weather variable for HR in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_direct_horizontal",
+                            "Country": "HR",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "HR_radiation_diffuse_horizontal",
+                        "description": "radiation_diffuse_horizontal weather variable for HR in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_diffuse_horizontal",
+                            "Country": "HR",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "HU_temperature",
+                        "description": "temperature weather variable for HU in degrees C",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "temperature",
+                            "Country": "HU",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "HU_radiation_direct_horizontal",
+                        "description": "radiation_direct_horizontal weather variable for HU in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_direct_horizontal",
+                            "Country": "HU",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "HU_radiation_diffuse_horizontal",
+                        "description": "radiation_diffuse_horizontal weather variable for HU in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_diffuse_horizontal",
+                            "Country": "HU",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "IE_temperature",
+                        "description": "temperature weather variable for IE in degrees C",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "temperature",
+                            "Country": "IE",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "IE_radiation_direct_horizontal",
+                        "description": "radiation_direct_horizontal weather variable for IE in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_direct_horizontal",
+                            "Country": "IE",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "IE_radiation_diffuse_horizontal",
+                        "description": "radiation_diffuse_horizontal weather variable for IE in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_diffuse_horizontal",
+                            "Country": "IE",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "IT_temperature",
+                        "description": "temperature weather variable for IT in degrees C",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "temperature",
+                            "Country": "IT",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "IT_radiation_direct_horizontal",
+                        "description": "radiation_direct_horizontal weather variable for IT in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_direct_horizontal",
+                            "Country": "IT",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "IT_radiation_diffuse_horizontal",
+                        "description": "radiation_diffuse_horizontal weather variable for IT in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_diffuse_horizontal",
+                            "Country": "IT",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "LT_temperature",
+                        "description": "temperature weather variable for LT in degrees C",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "temperature",
+                            "Country": "LT",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "LT_radiation_direct_horizontal",
+                        "description": "radiation_direct_horizontal weather variable for LT in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_direct_horizontal",
+                            "Country": "LT",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "LT_radiation_diffuse_horizontal",
+                        "description": "radiation_diffuse_horizontal weather variable for LT in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_diffuse_horizontal",
+                            "Country": "LT",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "LU_temperature",
+                        "description": "temperature weather variable for LU in degrees C",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "temperature",
+                            "Country": "LU",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "LU_radiation_direct_horizontal",
+                        "description": "radiation_direct_horizontal weather variable for LU in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_direct_horizontal",
+                            "Country": "LU",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "LU_radiation_diffuse_horizontal",
+                        "description": "radiation_diffuse_horizontal weather variable for LU in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_diffuse_horizontal",
+                            "Country": "LU",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "LV_temperature",
+                        "description": "temperature weather variable for LV in degrees C",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "temperature",
+                            "Country": "LV",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "LV_radiation_direct_horizontal",
+                        "description": "radiation_direct_horizontal weather variable for LV in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_direct_horizontal",
+                            "Country": "LV",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "LV_radiation_diffuse_horizontal",
+                        "description": "radiation_diffuse_horizontal weather variable for LV in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_diffuse_horizontal",
+                            "Country": "LV",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "NL_temperature",
+                        "description": "temperature weather variable for NL in degrees C",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "temperature",
+                            "Country": "NL",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "NL_radiation_direct_horizontal",
+                        "description": "radiation_direct_horizontal weather variable for NL in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_direct_horizontal",
+                            "Country": "NL",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "NL_radiation_diffuse_horizontal",
+                        "description": "radiation_diffuse_horizontal weather variable for NL in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_diffuse_horizontal",
+                            "Country": "NL",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "NO_temperature",
+                        "description": "temperature weather variable for NO in degrees C",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "temperature",
+                            "Country": false,
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "NO_radiation_direct_horizontal",
+                        "description": "radiation_direct_horizontal weather variable for NO in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_direct_horizontal",
+                            "Country": false,
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "NO_radiation_diffuse_horizontal",
+                        "description": "radiation_diffuse_horizontal weather variable for NO in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_diffuse_horizontal",
+                            "Country": false,
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "PL_temperature",
+                        "description": "temperature weather variable for PL in degrees C",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "temperature",
+                            "Country": "PL",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "PL_radiation_direct_horizontal",
+                        "description": "radiation_direct_horizontal weather variable for PL in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_direct_horizontal",
+                            "Country": "PL",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "PL_radiation_diffuse_horizontal",
+                        "description": "radiation_diffuse_horizontal weather variable for PL in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_diffuse_horizontal",
+                            "Country": "PL",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "PT_temperature",
+                        "description": "temperature weather variable for PT in degrees C",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "temperature",
+                            "Country": "PT",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "PT_radiation_direct_horizontal",
+                        "description": "radiation_direct_horizontal weather variable for PT in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_direct_horizontal",
+                            "Country": "PT",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "PT_radiation_diffuse_horizontal",
+                        "description": "radiation_diffuse_horizontal weather variable for PT in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_diffuse_horizontal",
+                            "Country": "PT",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "RO_temperature",
+                        "description": "temperature weather variable for RO in degrees C",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "temperature",
+                            "Country": "RO",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "RO_radiation_direct_horizontal",
+                        "description": "radiation_direct_horizontal weather variable for RO in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_direct_horizontal",
+                            "Country": "RO",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "RO_radiation_diffuse_horizontal",
+                        "description": "radiation_diffuse_horizontal weather variable for RO in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_diffuse_horizontal",
+                            "Country": "RO",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "SE_temperature",
+                        "description": "temperature weather variable for SE in degrees C",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "temperature",
+                            "Country": "SE",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "SE_radiation_direct_horizontal",
+                        "description": "radiation_direct_horizontal weather variable for SE in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_direct_horizontal",
+                            "Country": "SE",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "SE_radiation_diffuse_horizontal",
+                        "description": "radiation_diffuse_horizontal weather variable for SE in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_diffuse_horizontal",
+                            "Country": "SE",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "SI_temperature",
+                        "description": "temperature weather variable for SI in degrees C",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "temperature",
+                            "Country": "SI",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "SI_radiation_direct_horizontal",
+                        "description": "radiation_direct_horizontal weather variable for SI in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_direct_horizontal",
+                            "Country": "SI",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "SI_radiation_diffuse_horizontal",
+                        "description": "radiation_diffuse_horizontal weather variable for SI in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_diffuse_horizontal",
+                            "Country": "SI",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "SK_temperature",
+                        "description": "temperature weather variable for SK in degrees C",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "temperature",
+                            "Country": "SK",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "SK_radiation_direct_horizontal",
+                        "description": "radiation_direct_horizontal weather variable for SK in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_direct_horizontal",
+                            "Country": "SK",
+                            "Resolution": "Country"
+                        }
+                    },
+                    {
+                        "name": "SK_radiation_diffuse_horizontal",
+                        "description": "radiation_diffuse_horizontal weather variable for SK in W/m2",
+                        "type": "number (float)",
+                        "opsdProperties": {
+                            "Variable": "radiation_diffuse_horizontal",
+                            "Country": "SK",
+                            "Resolution": "Country"
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}

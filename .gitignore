@@ -1,0 +1,75 @@
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# ── Virtual environments ──────────────────────────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+
+# ── Jupyter ───────────────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb
+
+# ── IDEs ─────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Pytest ────────────────────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ── Logs ─────────────────────────────────────────────────────────────────────
+logs/
+*.log
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Large raw data files (exceed GitHub 100 MB limit)
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Raw source folders (large CSVs / XLSX)
+Weather and solar energy/weather_data.csv
+Electricity consumption and demand/time_series.xlsx
+Electricity consumption and demand/time_series_15min_singleindex.csv
+Electricity consumption and demand/time_series_60min_singleindex.csv
+Electricity consumption and demand/time_series_30min_singleindex.csv
+Carbon Emissions Data/df_fuel_ckan.csv
+
+# Processed data (large CSVs)
+data/processed/carbon_emissions.csv
+data/processed/demand_features_DE.csv
+data/processed/demand_weather_DE.csv
+data/processed/demand_carbon_DE.csv
+data/processed/electricity_demand_DE.csv
+data/processed/weather_DE.csv
+
+# Trained model files (large binaries)
+models/demand_DE_rf.pkl
+models/solar_plant1_rf.pkl
+models/solar_plant2_rf.pkl
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Streamlit cache
+# ─────────────────────────────────────────────────────────────────────────────
+.streamlit/
+
+# ─────────────────────────────────────────────────────────────────────────────
+# OS / misc
+# ─────────────────────────────────────────────────────────────────────────────
+*.tmp
+*.bak
+complete_remaining.py

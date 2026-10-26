@@ -1,0 +1,28 @@
+{
+  "features": [
+    "hour_sin",
+    "hour_cos",
+    "month_sin",
+    "month_cos",
+    "dow_sin",
+    "dow_cos",
+    "is_daylight",
+    "is_weekend",
+    "IRRADIATION",
+    "AMBIENT_TEMPERATURE",
+    "MODULE_TEMPERATURE",
+    "irradiation_sq",
+    "irrad_x_temp",
+    "AC_POWER_lag_1",
+    "AC_POWER_lag_2",
+    "AC_POWER_lag_4",
+    "AC_POWER_lag_8",
+    "AC_POWER_lag_96",
+    "AC_POWER_roll_mean_4",
+    "AC_POWER_roll_mean_8",
+    "AC_POWER_roll_mean_96",
+    "AC_POWER_roll_std_4"
+  ],
+  "target": "AC_POWER",
+  "ts_col": "DATE_TIME"
+}

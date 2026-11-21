@@ -10,9 +10,9 @@
 
 | Name | Role |
 |---|---|
-| Ramavath Pavan | u23AI130 |
-| Vishwakarma Ashish Diwakar| U3AI129 |
-| Anurag Kumar Pankaj | U3AI126 |
+| Ramavath Pavan | U23AI130 |
+| Vishwakarma Ashish Diwakar| U23AI129 |
+| Anurag Kumar Pankaj | U23AI126 |
 
 ---
 

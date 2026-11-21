@@ -10,12 +10,9 @@
 
 | Name | Role |
 |---|---|
-| *(Member 1 — add name)* | *(e.g. Solar Forecasting & Feature Engineering)* |
-| *(Member 2 — add name)* | *(e.g. Demand Forecasting & LP Optimization)* |
-| *(Member 3 — add name)* | *(e.g. Dashboard & Sustainability Analysis)* |
-| *(Member 4 — add name)* | *(e.g. SVR Paper Replication & Set-Point Optimizer)* |
-
-> ✏️ **Fill in names above** — replace the placeholder rows with actual group member names and roles.
+| Ramavath Pavan | u23AI130 |
+| Vishwakarma Ashish Diwakar| U3AI129 |
+| Anurag Kumar Pankaj | U3AI126 |
 
 ---
 

@@ -5,10 +5,20 @@ Implements solar generation and electricity demand forecasting.
 
 Models:
   1. Persistence Baseline
-  2. Linear Regression
+  2. Linear Regression (Ridge)
   3. Random Forest Regressor
   4. XGBoost Regressor
-  5. LSTM (optional, enabled via use_lstm=True)
+  5. SVR with Gaussian kernel + Similar-Day Averaging
+     (Houchati, Beitelmal & Khraisheh, ASME 2022 method)
+  6. LSTM (optional, enabled via use_lstm=True)
+
+SVR Method (paper replication):
+  - K-means classifies days into sky-condition clusters (default 4).
+  - For each target day, N=3 nearest historical days (Euclidean distance
+    on weather features) are found within the same sky cluster.
+  - The mean of those N days' hourly target values becomes an extra feature
+    added to the SVR input alongside standard weather/time features.
+  - SVR uses an RBF (Gaussian) kernel; C, epsilon, gamma are grid-searched.
 
 Evaluation Metrics:
   - MAE, RMSE, R²
@@ -28,6 +38,9 @@ import numpy as np
 import pandas as pd
 from sklearn.linear_model import Ridge
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.svm import SVR
+from sklearn.model_selection import GridSearchCV
+from sklearn.cluster import KMeans
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.preprocessing import StandardScaler
 
@@ -167,11 +180,247 @@ class XGBModel:
         ).sort_values("importance", ascending=False)
 
 
+# ── SVR with Similar-Day Averaging (Houchati et al., ASME 2022) ───────────────
+def _build_daily_weather_matrix(
+    df: pd.DataFrame,
+    ts_col: str,
+    weather_cols: list[str],
+) -> pd.DataFrame:
+    """
+    Aggregate per-day weather statistics for similar-day matching.
+
+    For each calendar date, compute the mean of each weather column.
+    Returns a DataFrame indexed by date with one row per day.
+    """
+    tmp = df.copy()
+    tmp["_date"] = pd.to_datetime(tmp[ts_col]).dt.date
+    avail = [c for c in weather_cols if c in tmp.columns]
+    daily = tmp.groupby("_date")[avail].mean()
+    return daily  # index = date, columns = weather means
+
+
+def add_similar_day_feature(
+    df: pd.DataFrame,
+    ts_col: str,
+    target_col: str,
+    weather_cols: list[str],
+    n_similar: int = 3,
+    n_sky_clusters: int = 4,
+    train_mask: np.ndarray | None = None,
+) -> pd.DataFrame:
+    """
+    Paper method (Houchati et al.):
+      1. K-means cluster days by weather → sky-condition classes.
+      2. For each day, find N nearest historical days in the same sky class
+         (Euclidean distance on daily-mean weather).
+      3. Average the target-variable hourly profile of those N days.
+      4. Add this per-hour average as a new feature column.
+
+    Parameters
+    ----------
+    df          : feature-engineered DataFrame (must contain ts_col, target_col
+                  and at least one weather column).
+    ts_col      : timestamp column name.
+    target_col  : what we are forecasting (e.g. 'AC_POWER').
+    weather_cols: columns used for day similarity (e.g. temperature, irradiation).
+    n_similar   : N nearest days to average (paper uses N=3).
+    n_sky_clusters: K for K-means (paper uses 4 classes).
+    train_mask  : boolean mask of training rows; similar-day lookup is restricted
+                  to training rows only to prevent data leakage.
+
+    Returns df with a new column  `{target_col}_similar_day_avg`.
+    """
+    new_col = f"{target_col}_similar_day_avg"
+    df = df.copy()
+    df[new_col] = np.nan
+
+    df["_date"] = pd.to_datetime(df[ts_col]).dt.date
+
+    avail_weather = [c for c in weather_cols if c in df.columns]
+    if not avail_weather:
+        log.warning("No weather cols found for similar-day feature; skipping.")
+        df = df.drop(columns=["_date"])
+        return df
+
+    # Build daily weather summary (train rows only → no leakage)
+    if train_mask is not None:
+        ref_df = df.loc[train_mask]
+    else:
+        ref_df = df
+
+    daily_weather = ref_df.groupby("_date")[avail_weather].mean()
+    all_dates = daily_weather.index.tolist()
+
+    if len(all_dates) < n_sky_clusters + 1:
+        log.warning("Too few days for K-means similar-day feature; skipping.")
+        df = df.drop(columns=["_date"])
+        return df
+
+    # K-means sky classification
+    scaler_km = StandardScaler()
+    W = scaler_km.fit_transform(daily_weather.values)
+    km = KMeans(n_clusters=n_sky_clusters, random_state=42, n_init=10)
+    day_cluster = pd.Series(km.fit_predict(W), index=all_dates, name="sky_cluster")
+
+    # Build hourly lookup for reference days: date → array of hourly target vals
+    ref_hourly = {}
+    for date, grp in ref_df.groupby("_date"):
+        ref_hourly[date] = grp[target_col].values  # may vary in length
+
+    # For every row in df, compute the similar-day average
+    # (group by date for speed)
+    target_dates = df["_date"].unique()
+
+    for tdate in target_dates:
+        # Cluster of this day (may not be in training set)
+        if tdate in day_cluster.index:
+            tcluster = day_cluster[tdate]
+            # Same-cluster reference days (excluding current day to avoid leakage)
+            same_cluster = [d for d in all_dates if day_cluster.get(d) == tcluster and d != tdate]
+        else:
+            # Day not in training set → use all training dates
+            same_cluster = all_dates
+
+        if not same_cluster:
+            same_cluster = all_dates  # fallback
+
+        # Daily weather of this target day
+        if tdate in daily_weather.index:
+            td_w = daily_weather.loc[tdate].values
+        else:
+            # Use df row means for this date
+            td_w = df.loc[df["_date"] == tdate, avail_weather].mean().values
+
+        # Euclidean distances to same-cluster days
+        ref_w = daily_weather.loc[[d for d in same_cluster if d in daily_weather.index]]
+        if len(ref_w) == 0:
+            continue
+        dists = np.linalg.norm(
+            scaler_km.transform(ref_w.values) - scaler_km.transform(td_w.reshape(1, -1)),
+            axis=1,
+        )
+        nearest_n = ref_w.index[np.argsort(dists)[:n_similar]]
+
+        # Collect hourly profiles of the N nearest days and align by step index
+        profiles = []
+        for nd in nearest_n:
+            if nd in ref_hourly:
+                profiles.append(ref_hourly[nd])
+
+        if not profiles:
+            continue
+
+        # Align profiles: pad/truncate to the length of the target day
+        tday_rows = df[df["_date"] == tdate]
+        tlen = len(tday_rows)
+        aligned = []
+        for p in profiles:
+            if len(p) >= tlen:
+                aligned.append(p[:tlen])
+            else:
+                aligned.append(np.pad(p, (0, tlen - len(p)), mode="edge"))
+        avg_profile = np.mean(aligned, axis=0)
+
+        df.loc[tday_rows.index, new_col] = avg_profile
+
+    df = df.drop(columns=["_date"])
+    log.info("Similar-day feature '%s' added (%d NaN rows).", new_col, df[new_col].isna().sum())
+    return df
+
+
+class SVRModel:
+    """
+    SVR with Gaussian (RBF) kernel — replicates Houchati et al. (ASME 2022).
+
+    The model:
+      - Uses StandardScaler on inputs (SVR is distance-based).
+      - Grid-searches C, epsilon, gamma over a small grid on the validation set.
+      - Clips predictions to ≥ 0.
+
+    Usage:
+      model = SVRModel()
+      model.fit(X_train, y_train, X_val, y_val)
+      y_pred = model.predict(X_test)
+    """
+
+    # Grid from paper guidance: C controls accuracy-vs-complexity trade-off;
+    # gamma (σ) is the Gaussian kernel width; epsilon is the ε-insensitive tube.
+    # Kept small for fast training; widen for a full hyperparameter sweep.
+    PARAM_GRID = {
+        "C":       [1.0, 10.0],
+        "epsilon": [0.1, 0.5],
+        "gamma":   ["scale", 0.1],
+    }
+
+    def __init__(self):
+        self.scaler = StandardScaler()
+        self.model: SVR | None = None
+        self.name = "svr_rbf"
+        self.best_params_: dict = {}
+
+    # SVR training is O(n²) — subsample large datasets to keep it fast.
+    MAX_TRAIN_ROWS = 5000
+
+    def fit(
+        self,
+        X_train: np.ndarray,
+        y_train: np.ndarray,
+        X_val: np.ndarray | None = None,
+        y_val: np.ndarray | None = None,
+    ):
+        # Subsample if dataset is too large (SVR is O(n²) in training size)
+        if len(X_train) > self.MAX_TRAIN_ROWS:
+            rng = np.random.default_rng(42)
+            idx = rng.choice(len(X_train), self.MAX_TRAIN_ROWS, replace=False)
+            idx.sort()  # preserve rough chronological order
+            X_train = X_train[idx]
+            y_train = y_train[idx]
+            log.info("[SVR] Subsampled training set to %d rows (from %d) for speed.",
+                     self.MAX_TRAIN_ROWS, len(X_train) + (len(X_train) - len(idx)))
+
+        Xs_train = self.scaler.fit_transform(X_train)
+
+        # Combine train+val for grid-search cross-validation if val available
+        if X_val is not None and y_val is not None:
+            # Also subsample val for grid-search
+            if len(X_val) > 2000:
+                rng2 = np.random.default_rng(99)
+                vidx = rng2.choice(len(X_val), 2000, replace=False)
+                X_val = X_val[vidx]; y_val = y_val[vidx]
+            Xs_val = self.scaler.transform(X_val)
+            Xs_all = np.vstack([Xs_train, Xs_val])
+            y_all = np.concatenate([y_train, y_val])
+            cv = 3
+        else:
+            Xs_all = Xs_train
+            y_all = y_train
+            cv = 3
+
+        log.info("[SVR] Grid-searching hyperparameters (this may take a moment)...")
+        gs = GridSearchCV(
+            SVR(kernel="rbf"),
+            self.PARAM_GRID,
+            cv=cv,
+            scoring="neg_mean_absolute_error",
+            n_jobs=-1,
+            refit=True,
+        )
+        gs.fit(Xs_all, y_all)
+        self.model = gs.best_estimator_
+        self.best_params_ = gs.best_params_
+        log.info("[SVR] Best params: %s", self.best_params_)
+        return self
+
+    def predict(self, X: np.ndarray) -> np.ndarray:
+        Xs = self.scaler.transform(X)
+        return self.model.predict(Xs).clip(min=0)
+
+
 # ── LSTM ──────────────────────────────────────────────────────────────────────
 class LSTMModel:
     """Sequence-to-one LSTM for time-series forecasting."""
 
-    def __init__(self, lookback: int = 96, units: int = 64, epochs: int = 30, batch_size: int = 64):
+    def __init__(self, lookback: int = 96, units: int = 64, epochs: int = 10, batch_size: int = 64):
         self.lookback = lookback
         self.units = units
         self.epochs = epochs
@@ -246,11 +495,20 @@ def train_and_evaluate(
     ts_col: str,
     task_name: str = "solar",
     use_lstm: bool = False,
+    use_svr: bool = True,
     train_frac: float = 0.70,
     val_frac: float = 0.15,
+    similar_day_weather_cols: list[str] | None = None,
 ) -> dict:
     """
     Full train/val/test pipeline for all models.
+
+    Parameters
+    ----------
+    use_svr : If True, trains SVR with similar-day averaging (paper method).
+    similar_day_weather_cols : Weather columns used for similar-day Euclidean
+        matching. Defaults to ['IRRADIATION','AMBIENT_TEMPERATURE','MODULE_TEMPERATURE']
+        for solar; ['temperature','radiation_direct_horizontal'] for demand.
 
     Returns dict with per-model metrics and predictions.
     """
@@ -267,16 +525,51 @@ def train_and_evaluate(
     df_clean = df[avail].dropna(subset=[target_col])
     df_clean = df_clean.sort_values(ts_col).reset_index(drop=True)
 
+    # ── Similar-Day Feature (Houchati et al.) ─────────────────────────────────
+    # Build before the train/test split so we can pass train_mask for leakage prevention
+    sim_day_col = f"{target_col}_similar_day_avg"
+    if use_svr:
+        if similar_day_weather_cols is None:
+            # Auto-detect weather columns
+            similar_day_weather_cols = [
+                c for c in ["IRRADIATION", "AMBIENT_TEMPERATURE", "MODULE_TEMPERATURE",
+                             "temperature", "radiation_direct_horizontal",
+                             "radiation_diffuse_horizontal"]
+                if c in df_clean.columns
+            ]
+        n_rows = len(df_clean)
+        train_end = int(n_rows * train_frac)
+        train_mask = np.zeros(n_rows, dtype=bool)
+        train_mask[:train_end] = True
+
+        df_clean = add_similar_day_feature(
+            df_clean,
+            ts_col=ts_col,
+            target_col=target_col,
+            weather_cols=similar_day_weather_cols,
+            n_similar=3,
+            n_sky_clusters=4,
+            train_mask=train_mask,
+        )
+        # Include the new feature in the SVR feature set
+        svr_feature_cols = feature_cols_dedup + ([sim_day_col] if sim_day_col in df_clean.columns else [])
+    else:
+        svr_feature_cols = feature_cols_dedup
+
     feat_avail = [c for c in feature_cols_dedup if c in df_clean.columns and c != target_col and c != ts_col]
     feat_avail = list(dict.fromkeys(feat_avail))  # final dedup
     log.info("[%s] Features used: %d/%d", task_name, len(feat_avail), len(feature_cols_dedup))
 
+    svr_feat_avail = [c for c in svr_feature_cols if c in df_clean.columns and c != target_col and c != ts_col]
+    svr_feat_avail = list(dict.fromkeys(svr_feat_avail))
+
     train, val, test = chronological_split(df_clean, ts_col, train_frac, val_frac)
 
     # Fill NaN in features with median from train set
-    medians = train[feat_avail].median()
+    all_feat_cols = list(dict.fromkeys(feat_avail + svr_feat_avail))
+    medians = train[all_feat_cols].median()
     for split in [train, val, test]:
-        split[feat_avail] = split[feat_avail].fillna(medians)
+        split[all_feat_cols] = split[all_feat_cols].fillna(medians)
 
     X_train = train[feat_avail].values
     y_train = train[target_col].values
@@ -284,6 +577,11 @@ def train_and_evaluate(
     y_val = val[target_col].values
     X_test = test[feat_avail].values
     y_test = test[target_col].values
+
+    # SVR uses augmented features (includes similar-day avg)
+    X_train_svr = train[svr_feat_avail].values
+    X_val_svr   = val[svr_feat_avail].values
+    X_test_svr  = test[svr_feat_avail].values
 
     all_metrics = []
     all_preds = {"timestamp": test[ts_col].values, "actual": y_test}
@@ -327,6 +625,22 @@ def train_and_evaluate(
         joblib.dump(xgb, MODELS_DIR / f"{task_name}_xgb.pkl")
         fi_xgb = xgb.feature_importance(feat_avail)
         fi_xgb.to_csv(METRICS_DIR / f"{task_name}_xgb_feature_importance.csv", index=False)
+
+    # ── SVR + Similar-Day (Houchati et al., ASME 2022) ───────────────────────
+    if use_svr:
+        log.info("[%s] Training SVR with similar-day feature (paper method)...", task_name)
+        svr_model = SVRModel()
+        svr_model.fit(X_train_svr, y_train, X_val_svr, y_val)
+        y_svr = svr_model.predict(X_test_svr)
+        m = compute_metrics(y_test, y_svr, "svr_rbf")
+        m["svr_best_params"] = str(svr_model.best_params_)
+        all_metrics.append(m)
+        all_preds["svr_rbf"] = y_svr
+        joblib.dump(svr_model, MODELS_DIR / f"{task_name}_svr.pkl")
+        # Save SVR feature list (includes similar-day column)
+        with open(MODELS_DIR / f"{task_name}_svr_features.json", "w") as f:
+            json.dump({"features": svr_feat_avail, "best_params": svr_model.best_params_}, f, indent=2)
+        log.info("[SVR] Best params saved.")
 
     # ── LSTM (optional) ──────────────────────────────────────────────────────
     if use_lstm:

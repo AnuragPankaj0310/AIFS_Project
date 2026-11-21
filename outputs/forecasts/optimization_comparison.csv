@@ -1,4 +1,4 @@
 Metric,Baseline,Optimized,Saving,Saving_pct,Saving_%
-Total Cost (€),153.5,156.125,-2.625,-1.7,-1.7
-Carbon Emissions (kg CO₂),171.92,174.86,-2.94,-1.7,-1.7
-Peak Grid Demand (kW),41.0,35.625,5.375,13.1,13.1
+Total Cost (€),153.5,156.6,-3.1,-2.0,-2.0
+Carbon Emissions (kg CO₂),171.92,175.392,-3.472,-2.0,-2.0
+Peak Grid Demand (kW),41.0,36.2,4.8,11.7,11.7

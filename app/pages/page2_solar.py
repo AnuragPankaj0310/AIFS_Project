@@ -29,6 +29,7 @@ MODEL_COLORS = {
     "linear_ridge": "#60a5fa",
     "random_forest": "#4ade80",
     "xgboost": "#c084fc",
+    "svr_rbf": "#fb923c",   # orange — paper model (Houchati et al.)
     "lstm": "#f472b6",
 }
 
